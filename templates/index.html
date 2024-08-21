@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Remove Background</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #faebef;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #fcf6f5;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        input[type="file"] {
+            margin-top: 20px;
+            padding: 10px;
+            border: 2px dashed #007bff;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #ffffff;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .image-box {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+            padding: 10px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            background-color: #ffffff;
+        }
+
+        .result-image {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .download-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .download-button:hover {
+            background-color: #218838;
+        }
+
+        .btn-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 20px;
+            font-size: 16px;
+            color: #007bff;
+        }
+
+        .result-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+    <script>
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Remove Background from Multiple Images</h1>
+        <form enctype="multipart/form-data" method="POST" onsubmit="showLoading()">
+            <input type="file" name="images" accept="image/*" multiple required>
+            <button type="submit">Remove Background</button>
+        </form>
+
+        <div id="loading" class="loading">Processing, please wait...</div>
+
+        {% if images_with_names %}
+            {% if zip_file %}
+                <div class="btn-wrap">
+                    <a href="{{ url_for('download_zip') }}" class="download-button">Download All Images as ZIP</a>
+                </div>
+            {% else %}
+                <p>ZIP file is not available yet.</p>
+            {% endif %}
+            <div class="image-box">
+                {% for image, name in images_with_names %}
+                    <div class="result-item">
+                        <img src="data:image/png;base64,{{ image }}" alt="{{ name }}" class="result-image"/>
+                        <p>{{ name }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
