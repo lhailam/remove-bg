@@ -1,26 +1,17 @@
-FROM python:3-alpine AS builder
- 
+# Use the official Python image from the Docker Hub
+FROM python:3.11-slim
+
+# Set the working directory in the container
 WORKDIR /app
- 
-RUN python3 -m venv venv
-ENV VIRTUAL_ENV=/app/venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
- 
+
+# Copy the requirements file into the container
 COPY requirements.txt .
-RUN pip install -r requirements.txt
- 
-# Stage 2
-FROM python:3-alpine AS runner
- 
-WORKDIR /app
- 
-COPY --from=builder /app/venv venv
-COPY app.py app.py
- 
-ENV VIRTUAL_ENV=/app/venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-ENV FLASK_APP=app/app.py
- 
-EXPOSE 8080
- 
-CMD ["gunicorn", "--bind" , ":8080", "--workers", "2", "app:app"]
+
+# Install the dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code into the container
+COPY . .
+
+# Specify the command to run the application using Gunicorn
+CMD ["gunicorn", "-b", "0.0.0.0:8000", "app:app"]
