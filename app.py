@@ -123,4 +123,4 @@ def download_zip():
     return "No ZIP file available", 404
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
