@@ -122,19 +122,11 @@
         {% if images_with_names %}
             {% if zip_file %}
                 <div class="btn-wrap">
-                    <a href="{{ url_for('download_zip') }}" class="download-button">Download All Images as ZIP</a>
+                    <a href="http://3.80.211.117/download-zip" class="download-button">Download All Images as ZIP</a>
                 </div>
             {% else %}
                 <p>ZIP file is not available yet.</p>
             {% endif %}
-            <div class="image-box">
-                {% for image, name in images_with_names %}
-                    <div class="result-item">
-                        <img src="data:image/png;base64,{{ image }}" alt="{{ name }}" class="result-image"/>
-                        <p>{{ name }}</p>
-                    </div>
-                {% endfor %}
-            </div>
         {% endif %}
     </div>
 

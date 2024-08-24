@@ -78,10 +78,10 @@ class BackgroundRemover:
                     # Save image to ZIP file using original file name
                     zipf.writestr(f'{file.filename}', img_io.getvalue())
 
-                    # Encode image to base64
-                    image_base64 = base64.b64encode(img_io.getvalue()).decode('utf-8')
-                    self.image_data.append(image_base64)
-                    self.image_names.append(file.filename)
+                    # # Encode image to base64
+                    # image_base64 = base64.b64encode(img_io.getvalue()).decode('utf-8')
+                    # self.image_data.append(image_base64)
+                    # self.image_names.append(file.filename)
         
             # Save the ZIP file name to session
             session['zip_file'] = zip_filename
@@ -100,7 +100,7 @@ class BackgroundRemover:
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    remover = BackgroundRemover()  # Đảm bảo sử dụng cùng một instance của BackgroundRemover
+    remover = BackgroundRemover() 
     if request.method == "POST":
         files = request.files.getlist("images")
         remover.process_images(files)
