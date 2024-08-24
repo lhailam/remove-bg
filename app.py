@@ -127,10 +127,13 @@ def download_zip():
     zip_file = session.get('zip_file', None)
     if zip_file and os.path.exists(zip_file):
         response = send_file(zip_file, as_attachment=True)
+        response.headers["Content-Disposition"] = "attachment; filename={}".format(os.path.basename(zip_file))
+        response.headers["Content-Type"] = "application/zip"
         os.remove(zip_file)
         session.pop('zip_file', None)
         return response
     return "No ZIP file available", 404
+
 
 if __name__ == "__main__":
     app.run()
