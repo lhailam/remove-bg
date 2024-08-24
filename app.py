@@ -1,5 +1,5 @@
 import os
-import uuid
+import shutil
 import zipfile
 from flask import Flask, render_template, request, send_file, session
 from flask_session import Session
@@ -28,6 +28,14 @@ class BackgroundRemover:
         self.zip_file = None
 
     def process_images(self, files):
+        
+        public_dir = 'public'
+
+        if os.path.exists(public_dir):
+            shutil.rmtree(public_dir)
+
+        os.makedirs(public_dir)
+        
         self.image_data = []  # Reset the list
         self.image_names = []  # Reset the list
         date_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -78,10 +86,10 @@ class BackgroundRemover:
                     # Save image to ZIP file using original file name
                     zipf.writestr(f'{file.filename}', img_io.getvalue())
 
-                    # # Encode image to base64
-                    # image_base64 = base64.b64encode(img_io.getvalue()).decode('utf-8')
-                    # self.image_data.append(image_base64)
-                    # self.image_names.append(file.filename)
+                    # Encode image to base64
+                    image_base64 = base64.b64encode(img_io.getvalue()).decode('utf-8')
+                    self.image_data.append(image_base64)
+                    self.image_names.append(file.filename)
         
             # Save the ZIP file name to session
             session['zip_file'] = zip_filename
@@ -100,7 +108,7 @@ class BackgroundRemover:
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    remover = BackgroundRemover() 
+    remover = BackgroundRemover()  # Đảm bảo sử dụng cùng một instance của BackgroundRemover
     if request.method == "POST":
         files = request.files.getlist("images")
         remover.process_images(files)
