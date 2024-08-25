@@ -9,8 +9,10 @@ from io import BytesIO
 import base64
 import logging
 import datetime
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 app.debug = True
 
 # Set up logging
@@ -21,6 +23,8 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SECRET_KEY'] = 'mysecret'
 Session(app)
 
+zip_filename = None
+
 class BackgroundRemover:
     def __init__(self):
         self.image_data = []
@@ -28,7 +32,7 @@ class BackgroundRemover:
         self.zip_file = None
 
     def process_images(self, files):
-        
+        global zip_filename
         public_dir = 'public'
 
         if os.path.exists(public_dir):
@@ -124,13 +128,13 @@ def index():
 
 @app.route('/download-zip')
 def download_zip():
-    zip_file = session.get('zip_file', None)
-    if zip_file and os.path.exists(zip_file):
-        response = send_file(zip_file, as_attachment=True)
-        response.headers["Content-Disposition"] = "attachment; filename={}".format(os.path.basename(zip_file))
+    global zip_filename
+    print("000",zip_filename)
+    if zip_filename and os.path.exists(zip_filename):
+        response = send_file(zip_filename, as_attachment=True)
+        response.headers["Content-Disposition"] = "attachment; filename={}".format(os.path.basename(zip_filename))
         response.headers["Content-Type"] = "application/zip"
-        os.remove(zip_file)
-        session.pop('zip_file', None)
+        os.remove(zip_filename)
         return response
     return "No ZIP file available", 404
 
