@@ -1,7 +1,7 @@
 import os
 import shutil
 import zipfile
-from flask import Flask, render_template, request, send_file, session
+from flask import Flask, render_template, request, send_file, session, redirect
 from flask_session import Session
 from rembg import remove
 from PIL import Image
@@ -116,6 +116,7 @@ def index():
     if request.method == "POST":
         files = request.files.getlist("images")
         remover.process_images(files)
+        return redirect('/download-zip')
 
     image_data = remover.get_image_data()
     image_names = remover.get_image_names()
@@ -140,4 +141,4 @@ def download_zip():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0', port=4000)
